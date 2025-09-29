@@ -22,19 +22,3 @@ The IO Beats Player is a **Web3 music player** built for:
 
 👉 See [Releases](../../releases) for binaries, changelog, and APK/TestFlight builds.
 
----
-
-## 🛠️ Installation (Dev)
-```bash
-# Clone repo
-git clone https://github.com/iobeatss/iobeats-player.git
-cd iobeats-player
-
-# Install dependencies
-npm install
-
-# Run dev
-npm run dev
-
-# Build production
-npm run build
