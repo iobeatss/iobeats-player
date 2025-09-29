@@ -1,56 +1,38 @@
-name: Update changelog
+name: Update changelog (manual)
 
 on:
-  # Auto: quand tu publies OU édite une release (RC ou Stable)
-  release:
-    types: [published, edited]
-  # Manuel: bouton "Run workflow" avec un tag au choix (utile pour rattraper 2.0.72, etc.)
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to apply (e.g. v2.0.73)'
+        description: 'Tag version (e.g. v2.0.73)'
         required: true
         type: string
 
 jobs:
-  update-changelog:
+  update:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Checkout default branch
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Compute TAG
-        id: ctx
-        run: |
-          # Si l’event est "release", on prend son tag; sinon on prend l’input manuel
-          TAG="${{ github.event.release.tag_name || inputs.tag }}"
-          echo "TAG=$TAG" >> $GITHUB_OUTPUT
-
-      - name: Debug info
+      - name: Debug inputs
         run: |
           echo "Event: ${{ github.event_name }}"
-          echo "Release tag: ${{ github.event.release.tag_name }}"
           echo "Input tag: ${{ inputs.tag }}"
 
       - name: Update CHANGELOG.md
         env:
-          TAG: ${{ steps.ctx.outputs.TAG }}
-        run: |
-          if [ -z "$TAG" ]; then
-            echo "❌ TAG is empty. Provide inputs.tag on manual run or publish a release."; exit 1;
-          fi
-          node scripts/update-changelog.mjs
+          TAG: ${{ inputs.tag }}   # <- on passe le tag au script ici
+        run: node scripts/update-changelog.mjs
 
-      - name: Commit & push changelog
+      - name: Commit & push
         run: |
           if git diff --quiet; then
             echo "No changes to commit."
@@ -58,6 +40,6 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add CHANGELOG.md
-            git commit -m "docs(changelog): add ${{ steps.ctx.outputs.TAG }}"
+            git commit -m "docs(changelog): add ${{ inputs.tag }}"
             git push
           fi
