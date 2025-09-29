@@ -22,3 +22,4 @@ Example: `2.0.73`
 ### 1. Prepare Release Branch
 ```bash
 git checkout -b release/X.Y.Z
+git pull origin main
