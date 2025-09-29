@@ -1,4 +1,4 @@
-name: Release on tag
+name: Release on tag (build + release + changelog)
 
 on:
   push:
@@ -10,11 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write   # nécessaire pour créer / mettre à jour la Release
+      contents: write   # nécessaire pour créer/mettre à jour la Release ET pousser le changelog
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -31,7 +33,7 @@ jobs:
             npm run build || npm run build:web || echo "no build"
           fi
 
-      # On calcule le tag (vX.Y.Z) et la version (X.Y.Z) pour réutilisation
+      # tag = vX.Y.Z  |  version = X.Y.Z
       - name: Compute tag & version
         id: meta
         run: |
@@ -61,7 +63,7 @@ jobs:
             echo "file=" >> $GITHUB_OUTPUT
           fi
 
-      # Avec notes (body_path)
+      # ===== Create GitHub Release =====
       - name: Create GitHub Release (with notes)
         if: steps.notes.outputs.file != ''
         uses: softprops/action-gh-release@v2
@@ -72,7 +74,6 @@ jobs:
           files: |
             out/player-${{ steps.meta.outputs.version }}.zip
 
-      # Sans notes (si aucun RELEASE_NOTES_vX.Y.Z.md)
       - name: Create GitHub Release (no notes)
         if: steps.notes.outputs.file == ''
         uses: softprops/action-gh-release@v2
@@ -81,3 +82,21 @@ jobs:
           name: IO Beats Player ${{ steps.meta.outputs.tag }}
           files: |
             out/player-${{ steps.meta.outputs.version }}.zip
+
+      # ===== Update CHANGELOG.md =====
+      - name: Update CHANGELOG.md from release notes (or skeleton)
+        env:
+          TAG: ${{ steps.meta.outputs.tag }}  # <-- passe vX.Y.Z à ton script
+        run: node scripts/update-changelog.mjs
+
+      - name: Commit & push changelog (if changed)
+        run: |
+          if git diff --quiet -- CHANGELOG.md; then
+            echo "No changes in CHANGELOG.md"
+          else
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add CHANGELOG.md
+            git commit -m "docs(changelog): add ${{ steps.meta.outputs.tag }}"
+            git push
+          fi
