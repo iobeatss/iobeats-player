@@ -3,14 +3,14 @@ name: Release on tag
 on:
   push:
     tags:
-      - 'v*'   # se déclenche sur v2.0.73, v2.0.74, etc.
+      - 'v*'   # déclenché sur v2.0.73, v2.0.74, etc.
 
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write   # nécessaire pour créer/mettre à jour la Release
+      contents: write   # nécessaire pour créer / mettre à jour la Release
 
     steps:
       - name: Checkout
@@ -27,32 +27,57 @@ jobs:
 
       - name: Build Player
         run: |
-          if [ -f package.json ]; then npm run build || npm run build:web || echo "no build"; fi
+          if [ -f package.json ]; then
+            npm run build || npm run build:web || echo "no build"
+          fi
+
+      # On calcule le tag (vX.Y.Z) et la version (X.Y.Z) pour réutilisation
+      - name: Compute tag & version
+        id: meta
+        run: |
+          echo "tag=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
 
       - name: Prepare artifacts
         run: |
           mkdir -p out
-          if [ -d ".next" ]; then zip -r out/player-${GITHUB_REF_NAME#v}.zip .next; \
-          elif [ -d "dist" ]; then zip -r out/player-${GITHUB_REF_NAME#v}.zip dist; \
-          elif [ -d "build" ]; then zip -r out/player-${GITHUB_REF_NAME#v}.zip build; \
-          else echo "No build dir found (.next/dist/build)"; fi
+          if [ -d ".next" ]; then
+            zip -r "out/player-${{ steps.meta.outputs.version }}.zip" .next
+          elif [ -d "dist" ]; then
+            zip -r "out/player-${{ steps.meta.outputs.version }}.zip" dist
+          elif [ -d "build" ]; then
+            zip -r "out/player-${{ steps.meta.outputs.version }}.zip" build
+          else
+            echo "No build dir found (.next/dist/build)"
+          fi
 
       - name: Pick release notes file
         id: notes
         run: |
-          TAG="${GITHUB_REF_NAME}"
-          NOTES="RELEASE_NOTES_${TAG}.md"
+          NOTES="RELEASE_NOTES_${GITHUB_REF_NAME}.md"
           if [ -f "$NOTES" ]; then
             echo "file=$NOTES" >> $GITHUB_OUTPUT
           else
             echo "file=" >> $GITHUB_OUTPUT
           fi
 
-      - name: Create GitHub Release
+      # Avec notes (body_path)
+      - name: Create GitHub Release (with notes)
+        if: steps.notes.outputs.file != ''
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: IO Beats Player ${{ github.ref_name }}
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: IO Beats Player ${{ steps.meta.outputs.tag }}
           body_path: ${{ steps.notes.outputs.file }}
           files: |
-            out/player-${{ github.ref_name#v }}.zip
+            out/player-${{ steps.meta.outputs.version }}.zip
+
+      # Sans notes (si aucun RELEASE_NOTES_vX.Y.Z.md)
+      - name: Create GitHub Release (no notes)
+        if: steps.notes.outputs.file == ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: IO Beats Player ${{ steps.meta.outputs.tag }}
+          files: |
+            out/player-${{ steps.meta.outputs.version }}.zip
