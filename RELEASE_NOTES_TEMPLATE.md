@@ -1,4 +1,4 @@
-# 🎧 IO Beats Player — Release Notes vX.Y.Z
+# 🎧 iO Beats Player — Release Notes vX.Y.Z
 **Date:** YYYY-MM-DD  
 **Status:** Stable / Release Candidate  
 
