@@ -1,19 +1,49 @@
 #!/usr/bin/env node
+// Update CHANGELOG.md with a new version section.
+// Usage (local):  TAG=v2.0.74 node scripts/update-changelog.mjs
+//        or:     node scripts/update-changelog.mjs v2.0.74
+// CI (GitHub Actions): pass TAG from release event (e.g. v2.0.74)
+
 import fs from "fs";
 import path from "path";
+import url from "url";
 
-const tag = process.env.TAG; // e.g. "v2.0.73"
-if (!tag || !/^v\d+\.\d+\.\d+(-.*)?$/.test(tag)) {
-  console.error("❌ TAG env missing or invalid. Expected like v2.0.73");
+const cwd = process.cwd();
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const tagInput = process.env.TAG || process.argv[2]; // e.g. v2.0.74
+if (!tagInput || !/^v\d+\.\d+\.\d+(-[\w.-]+)?$/.test(tagInput)) {
+  console.error("❌ Missing or invalid TAG. Expected like: v2.0.74");
   process.exit(1);
 }
-const version = tag.replace(/^v/, "");
+const version = tagInput.replace(/^v/, "");
 const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 
-const repoRoot = process.cwd();
-const changelogPath = path.join(repoRoot, "CHANGELOG.md");
-const notesFile = path.join(repoRoot, `RELEASE_NOTES_${tag}.md`);
-const fallbackTemplate = (v, d) => `## [${v}] - ${d}
+const changelogPath = path.join(cwd, "CHANGELOG.md");
+const releaseNotesPath = path.join(cwd, `RELEASE_NOTES_${tagInput}.md`);
+
+function ensureChangelogHeader(text) {
+  if (/^#\s+.+/m.test(text)) return text;
+  return (
+    "# 📜 Changelog — IO Beats Player\n\n" +
+    "All notable changes to this project will be documented in this file.\n" +
+    "This project follows Semantic Versioning (https://semver.org/).\n\n" +
+    text
+  );
+}
+
+// Build the new section either from release notes file or a fallback template
+function buildNewSection() {
+  if (fs.existsSync(releaseNotesPath)) {
+    let body = fs.readFileSync(releaseNotesPath, "utf-8").trim();
+    // Remove a leading H1 if present
+    body = body.replace(/^# .*\n+/, "");
+    return `## [${version}] - ${today}\n${body}\n`;
+  }
+
+  // Fallback skeleton
+  return `## [${version}] - ${today}
 ### ✨ Added
 - _Describe new features._
 
@@ -21,55 +51,52 @@ const fallbackTemplate = (v, d) => `## [${v}] - ${d}
 - _Describe changes._
 
 ### 🐞 Fixed
-- _Describe fixes._
+- _Describe bug fixes._
 
 ### 🛠 DevOps
-- _Build/CI/monitoring notes._
-
-`;
-
-let existing = "";
-if (fs.existsSync(changelogPath)) {
-  existing = fs.readFileSync(changelogPath, "utf-8");
-} else {
-  existing = `# 📜 Changelog — IO Beats Player
-
-All notable changes to this project will be documented in this file.
-This project follows Semantic Versioning (https://semver.org/).
+- _Build/CI/Monitoring notes._
 
 `;
 }
 
-let newSection = "";
-if (fs.existsSync(notesFile)) {
-  // Use the release notes file content under the new heading
-  const body = fs.readFileSync(notesFile, "utf-8").trim();
-  // Keep only the markdown body (remove a leading H1 if present)
-  const cleaned = body.replace(/^# .*\n+/, "");
-  newSection = `\n## [${version}] - ${today}\n${cleaned}\n`;
-} else {
-  newSection = "\n" + fallbackTemplate(version, today);
-}
+function insertSectionTop(existing, section) {
+  // If already present, skip
+  if (existing.includes(`## [${version}] -`)) {
+    console.log(`ℹ️ CHANGELOG already contains ${version}. Skipping.`);
+    return existing;
+  }
 
-// Avoid duplicating if section already exists
-if (existing.includes(`## [${version}] -`)) {
-  console.log(`ℹ️ Changelog already contains ${version}. Skipping.`);
-  process.exit(0);
-}
+  // Keep or create header block, then insert section just after it
+  const headerRegex = /^(# .*\n(?:.*\n)*?)(?=\n## |\n$)/m; // capture header block at top
+  const match = existing.match(headerRegex);
 
-// Insert after the header line(s)
-let updated = existing;
-const headerMarker = /^(# .*\n(?:.*\n)*?)(?:\n## |\n$)/m; // capture header block
-const match = existing.match(headerMarker);
+  if (match) {
+    const header = match[1];
+    const updated = existing.replace(header, header + section + "\n");
+    return updated;
+  }
 
-if (match) {
-  // Insert newSection after header block
-  const headerBlock = match[1];
-  updated = existing.replace(headerBlock, headerBlock + newSection + "\n");
-} else {
   // Fallback: prepend
-  updated = newSection + "\n" + existing;
+  return section + "\n" + existing;
 }
 
-fs.writeFileSync(changelogPath, updated);
-console.log(`✅ CHANGELOG.md updated with ${version}`);
+function run() {
+  let changelog = fs.existsSync(changelogPath)
+    ? fs.readFileSync(changelogPath, "utf-8")
+    : "";
+
+  changelog = ensureChangelogHeader(changelog);
+
+  const newSection = buildNewSection();
+  const updated = insertSectionTop(changelog, newSection);
+
+  if (updated === changelog) {
+    console.log("No changes written (duplicate or unchanged).");
+    return;
+  }
+
+  fs.writeFileSync(changelogPath, updated);
+  console.log(`✅ CHANGELOG.md updated with ${version}`);
+}
+
+run();
