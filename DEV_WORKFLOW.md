@@ -1,6 +1,6 @@
-# 🎧 IO Beats Player — Development & Release Workflow
+# 🎧 iO Beats Player — Development & Release Workflow
 
-This document describes the standard workflow for versioning, changelogs, release notes, and publishing new versions of the IO Beats Player.
+This document describes the standard workflow for versioning, changelogs, release notes, and publishing new versions of the iO Beats Player.
 
 ---
 
