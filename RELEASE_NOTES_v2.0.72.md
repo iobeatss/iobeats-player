@@ -1,4 +1,4 @@
-# 🎶 IO Beats Player v2.0.72 — Stable Release
+# 🎶 iO Beats Player v2.0.72 — Stable Release
 
 ## ✨ What's New
 - First production-ready release of the new IO Beats Player 2.x series.  
