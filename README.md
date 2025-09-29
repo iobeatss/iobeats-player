@@ -1,12 +1,12 @@
-# 🎧 IO Beats Player
+# 🎧 iO Beats Player
 
-Official repository of the **IO Beats Player** (Web + Mobile bridge).  
+Official repository of the **iO Beats Player** (Web + Mobile bridge).  
 This player powers the IO Beats ecosystem: marketplace, NFTs, streaming, staking, and mobile dApp integration.
 
 ---
 
 ## 📌 About
-The IO Beats Player is a **Web3 music player** built for:
+The iO Beats Player is a **Web3 music player** built for:
 - 🎶 Streaming (MP3, HLS)
 - 🖼️ NFT albums (ERC-721/1155)
 - 💰 Royalties (EIP-2981, PaymentSplitter)
