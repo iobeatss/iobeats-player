@@ -2,24 +2,36 @@
   "name": "iobeats-player",
   "version": "2.0.73",
   "description": "IO Beats Player — Web3 music player (Web + Mobile bridge).",
-  "main": "index.js",
+  "private": true,
   "type": "module",
+  "main": "index.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "update:changelog": "node ./scripts/update-changelog.mjs"
+
+    "update:changelog": "node ./scripts/update-changelog.mjs",
+
+    "release:notes": "cp -n RELEASE_NOTES_TEMPLATE.md RELEASE_NOTES_v$npm_config_tag.md || true",
+    "release:changelog": "TAG=$npm_config_tag node ./scripts/update-changelog.mjs",
+    "release:tag": "git tag v$npm_config_tag && git push origin v$npm_config_tag",
+    "release:all": "npm run release:notes --tag=$npm_config_tag && npm run release:changelog --tag=$npm_config_tag"
   },
-  "keywords": [
-    "web3",
-    "music",
-    "nft",
-    "player",
-    "iobeats"
-  ],
+  "keywords": ["web3", "music", "nft", "player", "iobeats"],
   "author": "IO Beats",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iobeats/iobeats-player.git"
+  },
+  "homepage": "https://open.iobeats.com",
+  "bugs": {
+    "url": "https://github.com/iobeats/iobeats-player/issues"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
     "next": "^13.5.0",
     "react": "^18.2.0",
