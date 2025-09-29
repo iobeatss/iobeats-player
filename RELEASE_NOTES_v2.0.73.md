@@ -1,4 +1,4 @@
-# 🎧 IO Beats Player — Release Notes v2.0.73
+# 🎧 iO Beats Player — Release Notes v2.0.73
 **Date:** 2025-09-28  
 **Status:** Release Candidate → preparing for mobile launch  
 
