@@ -3,7 +3,7 @@ name: Release on tag (build + release + changelog)
 on:
   push:
     tags:
-      - 'v*'   # déclenché sur v2.0.73, v2.0.74, etc.
+      - 'v*'   # v2.0.73, v2.0.73-rc.1, etc.
 
 jobs:
   build-and-release:
@@ -33,60 +33,97 @@ jobs:
             npm run build || npm run build:web || echo "no build"
           fi
 
-      # tag = vX.Y.Z  |  version = X.Y.Z
-      - name: Compute tag & version
+      # tag = vX.Y.Z | vX.Y.Z-rc.N    ; version = X.Y.Z-rc.N ; base_version = X.Y.Z
+      - name: Compute meta (tag, version, base_version, prerelease)
         id: meta
         run: |
-          echo "tag=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
-          echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          BASE_VERSION="$(printf "%s" "$VERSION" | sed 's/-rc\..*$//')"
+          PRERELEASE="false"
+          echo "$TAG" | grep -qi -- "-rc" && PRERELEASE="true"
 
-      - name: Prepare artifacts
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "base_version=$BASE_VERSION" >> $GITHUB_OUTPUT
+          echo "prerelease=$PRERELEASE" >> $GITHUB_OUTPUT
+
+      - name: Prepare artifact (zip if build exists)
+        id: artifact
         run: |
           mkdir -p out
+          OUT="out/player-${{ steps.meta.outputs.version }}.zip"
           if [ -d ".next" ]; then
-            zip -r "out/player-${{ steps.meta.outputs.version }}.zip" .next
+            zip -r "$OUT" .next >/dev/null
+            echo "path=$OUT" >> $GITHUB_OUTPUT
           elif [ -d "dist" ]; then
-            zip -r "out/player-${{ steps.meta.outputs.version }}.zip" dist
+            zip -r "$OUT" dist >/dev/null
+            echo "path=$OUT" >> $GITHUB_OUTPUT
           elif [ -d "build" ]; then
-            zip -r "out/player-${{ steps.meta.outputs.version }}.zip" build
+            zip -r "$OUT" build >/dev/null
+            echo "path=$OUT" >> $GITHUB_OUTPUT
           else
-            echo "No build dir found (.next/dist/build)"
+            echo "path=" >> $GITHUB_OUTPUT
+            echo "No build dir found (.next / dist / build) — release will be created without artifact."
           fi
 
-      - name: Pick release notes file
+      - name: Pick release notes file (supports RC fallback)
         id: notes
         run: |
-          NOTES="RELEASE_NOTES_${GITHUB_REF_NAME}.md"
-          if [ -f "$NOTES" ]; then
-            echo "file=$NOTES" >> $GITHUB_OUTPUT
+          # 1) RC tries: RELEASE_NOTES_vX.Y.Z-rc.N.md
+          CANDIDATE="RELEASE_NOTES_${{ steps.meta.outputs.tag }}.md"
+          # 2) Fallback: RELEASE_NOTES_vX.Y.Z.md
+          FALLBACK="RELEASE_NOTES_v${{ steps.meta.outputs.base_version }}.md"
+
+          if [ -f "$CANDIDATE" ]; then
+            echo "file=$CANDIDATE" >> $GITHUB_OUTPUT
+          elif [ -f "$FALLBACK" ]; then
+            echo "file=$FALLBACK" >> $GITHUB_OUTPUT
           else
             echo "file=" >> $GITHUB_OUTPUT
           fi
 
       # ===== Create GitHub Release =====
-      - name: Create GitHub Release (with notes)
-        if: steps.notes.outputs.file != ''
+      - name: Create GitHub Release (with notes + artifact)
+        if: steps.notes.outputs.file != '' && steps.artifact.outputs.path != ''
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.meta.outputs.tag }}
           name: IO Beats Player ${{ steps.meta.outputs.tag }}
+          prerelease: ${{ steps.meta.outputs.prerelease }}
           body_path: ${{ steps.notes.outputs.file }}
-          files: |
-            out/player-${{ steps.meta.outputs.version }}.zip
+          files: ${{ steps.artifact.outputs.path }}
 
-      - name: Create GitHub Release (no notes)
-        if: steps.notes.outputs.file == ''
+      - name: Create GitHub Release (with notes, no artifact)
+        if: steps.notes.outputs.file != '' && steps.artifact.outputs.path == ''
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.meta.outputs.tag }}
           name: IO Beats Player ${{ steps.meta.outputs.tag }}
-          files: |
-            out/player-${{ steps.meta.outputs.version }}.zip
+          prerelease: ${{ steps.meta.outputs.prerelease }}
+          body_path: ${{ steps.notes.outputs.file }}
+
+      - name: Create GitHub Release (no notes, with artifact)
+        if: steps.notes.outputs.file == '' && steps.artifact.outputs.path != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: IO Beats Player ${{ steps.meta.outputs.tag }}
+          prerelease: ${{ steps.meta.outputs.prerelease }}
+          files: ${{ steps.artifact.outputs.path }}
+
+      - name: Create GitHub Release (no notes, no artifact)
+        if: steps.notes.outputs.file == '' && steps.artifact.outputs.path == ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: IO Beats Player ${{ steps.meta.outputs.tag }}
+          prerelease: ${{ steps.meta.outputs.prerelease }}
 
       # ===== Update CHANGELOG.md =====
       - name: Update CHANGELOG.md from release notes (or skeleton)
         env:
-          TAG: ${{ steps.meta.outputs.tag }}  # <-- passe vX.Y.Z à ton script
+          TAG: ${{ steps.meta.outputs.tag }}
         run: node scripts/update-changelog.mjs
 
       - name: Commit & push changelog (if changed)
