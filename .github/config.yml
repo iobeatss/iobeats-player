@@ -1,0 +1,47 @@
+# .github/config.yml
+# Unified Welcome Bot configuration for all IO Beats repositories 🎶
+
+# Message when someone opens their first issue
+newIssueWelcomeComment: >
+  <p align="center">
+    <img src="https://raw.githubusercontent.com/iobeatss/iobeats-logo-assets/main/hero1.gif" 
+         alt="IO Beats Banner" width="100%" />
+  </p>
+
+  👋 Thanks for opening your first *issue* on **IO Beats**!  
+  The team will review it shortly.  
+
+  🔗 Useful links:  
+  - [📚 IO Beats Wiki](https://github.com/iobeatss/treasury/wiki)  
+  - [🤝 Contribution Guide](./CONTRIBUTING.md)  
+  - [🌐 Website](https://iobeats.com)  
+
+  💬 Join our community: [Telegram](https://t.me/iobeats) · [Discord](https://discord.gg/iobeats)  
+
+---
+
+# Message when someone opens their first PR
+newPRWelcomeComment: >
+  <p align="center">
+    <img src="https://raw.githubusercontent.com/iobeatss/iobeats-logo-assets/main/IOB_FullLogo_OrangeWhite.png" 
+         alt="IO Beats Logo" width="250" />
+  </p>
+
+  🚀 Thanks for submitting your first *pull request* to **IO Beats**!  
+  We really appreciate your contribution 🙌  
+
+  👉 Please make sure to review our [CONTRIBUTING.md](./CONTRIBUTING.md).  
+
+---
+
+# Message when someone gets their first PR merged
+firstPRMergeComment: >
+  <p align="center">
+    <img src="https://raw.githubusercontent.com/iobeatss/iobeats-logo-assets/main/IOB_Icon_Bear.png" 
+         alt="IO Beats Mascot" width="120" />
+  </p>
+
+  🎉 Congratulations! Your first *pull request* has been merged!  
+  Thank you for contributing to **IO Beats** ❤️  
+
+  👉 *One team, one dream.*
