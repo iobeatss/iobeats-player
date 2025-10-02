@@ -14,10 +14,42 @@
     "update:changelog": "node ./scripts/update-changelog.mjs",
 
     "release:notes": "cp -n RELEASE_NOTES_TEMPLATE.md RELEASE_NOTES_v$npm_config_tag.md || true",
+    "release:notes:new": "VERSION=$npm_config_tag ./scripts/mk-notes.sh",
     "release:changelog": "TAG=$npm_config_tag node ./scripts/update-changelog.mjs",
 
-    "release:check-clean": "git diff-index --quiet HEAD -- || (echo '\n❌ Uncommitted changes detected. Commit or stash before tagging.\n' && exit 1)",
+    "release:check-clean": "git diff-index --quiet HEAD -- || (echo '\\n❌ Uncommitted changes detected. Commit or stash before tagging.\\n' && exit 1)",
     "release:tag": "npm run release:check-clean && git tag v$npm_config_tag && git push origin v$npm_config_tag",
     "release:tag:rc": "npm run release:check-clean && git tag v$npm_config_tag-rc.$npm_config_rc && git push origin v$npm_config_tag-rc.$npm_config_rc",
 
-    "release:all": "npm run release:notes --tag=$npm_config_tag && npm run releas
+    "release:all": "npm run release:notes --tag=$npm_config_tag && npm run release:changelog --tag=$npm_config_tag && npm run release:tag --tag=$npm_config_tag"
+  },
+  "keywords": [
+    "web3",
+    "music",
+    "nft",
+    "player",
+    "iobeats"
+  ],
+  "author": "IO Beats",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iobeatss/iobeats-player.git"
+  },
+  "homepage": "https://open.iobeats.com",
+  "bugs": {
+    "url": "https://github.com/iobeatss/iobeats-player/issues"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "next": "^15.5.4",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.36.0",
+    "eslint-config-next": "^15.5.4"
+  }
+}
