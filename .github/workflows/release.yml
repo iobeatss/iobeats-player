@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write   # nécessaire pour créer/mettre à jour la Release ET pousser le changelog
+      contents: write   # créer/mettre à jour la Release + pousser le changelog
 
     steps:
       - name: Checkout
@@ -33,7 +33,10 @@ jobs:
             npm run build || npm run build:web || echo "no build"
           fi
 
-      # tag = vX.Y.Z | vX.Y.Z-rc.N    ; version = X.Y.Z-rc.N ; base_version = X.Y.Z
+      # tag = vX.Y.Z | vX.Y.Z-rc.N
+      # version = X.Y.Z-rc.N
+      # base_version = X.Y.Z
+      # prerelease = true si -rc dans le tag
       - name: Compute meta (tag, version, base_version, prerelease)
         id: meta
         run: |
@@ -70,9 +73,9 @@ jobs:
       - name: Pick release notes file (supports RC fallback)
         id: notes
         run: |
-          # 1) RC tries: RELEASE_NOTES_vX.Y.Z-rc.N.md
+          # 1) RC exact : RELEASE_NOTES_vX.Y.Z-rc.N.md
           CANDIDATE="RELEASE_NOTES_${{ steps.meta.outputs.tag }}.md"
-          # 2) Fallback: RELEASE_NOTES_vX.Y.Z.md
+          # 2) Fallback stable : RELEASE_NOTES_vX.Y.Z.md
           FALLBACK="RELEASE_NOTES_v${{ steps.meta.outputs.base_version }}.md"
 
           if [ -f "$CANDIDATE" ]; then
@@ -83,8 +86,8 @@ jobs:
             echo "file=" >> $GITHUB_OUTPUT
           fi
 
-      # ===== Create GitHub Release =====
-      - name: Create GitHub Release (with notes + artifact)
+      # ===== Create GitHub Release (toutes combinaisons notes/artifact) =====
+      - name: Create GitHub Release (notes + artifact)
         if: steps.notes.outputs.file != '' && steps.artifact.outputs.path != ''
         uses: softprops/action-gh-release@v2
         with:
@@ -94,7 +97,7 @@ jobs:
           body_path: ${{ steps.notes.outputs.file }}
           files: ${{ steps.artifact.outputs.path }}
 
-      - name: Create GitHub Release (with notes, no artifact)
+      - name: Create GitHub Release (notes, no artifact)
         if: steps.notes.outputs.file != '' && steps.artifact.outputs.path == ''
         uses: softprops/action-gh-release@v2
         with:
@@ -103,7 +106,7 @@ jobs:
           prerelease: ${{ steps.meta.outputs.prerelease }}
           body_path: ${{ steps.notes.outputs.file }}
 
-      - name: Create GitHub Release (no notes, with artifact)
+      - name: Create GitHub Release (no notes, artifact)
         if: steps.notes.outputs.file == '' && steps.artifact.outputs.path != ''
         uses: softprops/action-gh-release@v2
         with:
