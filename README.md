@@ -1,3 +1,12 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/iobeatss/iobeats-logo-assets/main/hero1.gif"
+       alt="IO Beats Treasury Banner" width="100%" />
+</p>
+
+[![Latest Release](https://img.shields.io/github/v/release/iobeatss/treasury?display_name=tag&sort=semver)](https://github.com/iobeatss/treasury/releases)
+[![Release workflow](https://img.shields.io/github/actions/workflow/status/iobeatss/treasury/release-treasury.yml?branch=main&label=Release%20workflow)](https://github.com/iobeatss/treasury/actions/workflows/release-treasury.yml)
+
+
 # 🎧 iO Beats Player
 
 Official repository of the **iO Beats Player** (Web + Mobile bridge).  
