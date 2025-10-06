@@ -3,9 +3,6 @@
        alt="IO Beats Treasury Banner" width="100%" />
 </p>
 
-[![Latest Release](https://img.shields.io/github/v/release/iobeatss/treasury?display_name=tag&sort=semver)](https://github.com/iobeatss/treasury/releases)
-[![Release workflow](https://img.shields.io/github/actions/workflow/status/iobeatss/treasury/release-treasury.yml?branch=main&label=Release%20workflow)](https://github.com/iobeatss/treasury/actions/workflows/release-treasury.yml)
-
 ## 🔗 Quick Menu
 - **Repos:**  
   [IOB Smart Contracts](https://github.com/iobeatss/IOB-Smart-contract) ·
@@ -14,6 +11,8 @@
   [BeatsApe](https://github.com/iobeatss/BeatsApe) ·
   [iobeats-docs](https://github.com/iobeatss/iobeats-docs) ·
   [iobeats-logo-assets](https://github.com/iobeatss/iobeats-logo-assets)  
+
+
 
 # 🎧 iO Beats Player
 
