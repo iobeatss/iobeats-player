@@ -84,7 +84,39 @@ It connects streaming, NFTs, DeFi utilities, and wallet interactions — all wit
 
 📜 See full policy → [SECURITY.md](./SECURITY.md)
 
+
 ---
 
-## 🧱 Repository Structure  
+## 🔗 Governance  
+
+All major updates are validated by the DAO through **Snapshot voting** and **GitHub discussions**.  
+
+🗳️ Participate → [Snapshot](https://snapshot.box/#/s:iobdao.eth)  
+📂 Governance discussions → [GitHub Governance](https://github.com/iobeatss/treasury/tree/main/docs/governance)
+
+---
+
+## 🌍 Multi-Chain Compatibility  
+
+- **Ethereum** (main deployment)  
+- **BNB Chain**  
+- **Polygon**  
+- **Base (Coinbase L2)**  
+- **Arbitrum**  
+
+🎯 The player automatically detects and adapts to active network connections.
+
+---
+
+## ❤️ Credits  
+
+Developed and maintained by **IO Beats DAO Core Team**.  
+Special thanks to contributors, auditors, and partners from the **IO Beats community**.  
+
+> “One Team. One Dream. One Beat.” 🎧  
+
+---
+
+© 2025 **IO Beats DAO** — *Music. DeFi. Community.*
+ 
 
