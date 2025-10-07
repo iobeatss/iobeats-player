@@ -64,26 +64,6 @@ It connects streaming, NFTs, DeFi utilities, and wallet interactions — all wit
 📦 **See:** [Releases](../../releases) for changelog, builds, and APK/TestFlight access.  
 🧾 **Changelog:** [CHANGELOG.md](./CHANGELOG.md)
 
----
-
-## 🧩 Tech Stack  
-
-- **Frontend:** React + TypeScript + Tailwind  
-- **Backend:** Node.js + Express + IPFS pinning  
-- **Web3:** Ethers.js + Wagmi + WalletConnect  
-- **Streaming:** HLS.js + custom audio service worker  
-- **State Management:** Zustand / Context API  
-
----
-
-## 🛡️ Security & Integrity  
-
-✅ Smart contract calls via **secure RPC endpoints**  
-✅ IPFS & NFT metadata integrity checks  
-✅ Auto-logout for expired wallet sessions  
-
-📜 See full policy → [SECURITY.md](./SECURITY.md)
-
 
 ---
 
