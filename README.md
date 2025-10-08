@@ -10,16 +10,21 @@
   [iobeats-player](https://github.com/iobeatss/iobeats-player) ·
   [BeatsApe](https://github.com/iobeatss/BeatsApe) ·
   [iobeats-docs](https://github.com/iobeatss/iobeats-docs) ·
-  [iobeats-logo-assets](https://github.com/iobeatss/iobeats-logo-assets)  
+  [iobeats-logo-assets](https://github.com/iobeatss/iobeats-logo-assets)
+
+- **Documentation:**  
+  [MultiChain Deployment](https://github.com/iobeatss/IOB-Smart-contract/blob/main/MULTICHAIN.md) ·
+  [Audit Report](https://github.com/iobeatss/IOB-Smart-contract/blob/main/AUDIT.md) ·
+  [Changelog](https://github.com/iobeatss/IOB-Smart-contract/blob/main/CHANGELOG.md)
 
 ---
 
 # 🎧 iO Beats Player  
 
-[![Audit](https://img.shields.io/badge/Audit-Cyberscope-brightgreen.svg)](https://raw.githubusercontent.com/cyberscope-io/audits/main/iob/audit.pdf)
+[![Audit](https://img.shields.io/badge/Audit-Cyberscope-brightgreen.svg)](https://github.com/iobeatss/IOB-Smart-contract/blob/main/AUDIT.md)
 [![Docs](https://img.shields.io/badge/Docs-GitBook-brightgreen.svg)](https://whitepaper.iobeats.com/)
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.24-blue.svg?logo=solidity)](https://docs.soliditylang.org/en/v0.8.24/)
-[![Deployment](https://img.shields.io/badge/Deployed-MultiChain-purple.svg)](https://github.com/iobeatss/IOB-Smart-contract#deployment)
+[![Deployment](https://img.shields.io/badge/Deployed-MultiChain-purple.svg)](https://github.com/iobeatss/IOB-Smart-contract/blob/main/MULTICHAIN.md)
 [![Snapshot](https://img.shields.io/badge/Vote%20Now-Snapshot-blueviolet?logo=snapshot&logoColor=white)](https://snapshot.box/#/s:iobdao.eth)
 [![Dune](https://img.shields.io/badge/Analytics-Dune-orange?logo=dune&logoColor=white)](https://dune.com/iobeats_dao)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Community-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/rQSCaxPNs5)
@@ -58,12 +63,26 @@ It connects streaming, NFTs, DeFi utilities, and wallet interactions — all wit
 
 ## 🚀 Current Version  
 
-- **Stable:** `v2.0.72`  
-- **Release Candidate:** `v2.0.73` *(preparing for mobile launch)*  
+| Channel | Version | Status |
+|----------|----------|---------|
+| **Stable** | `v2.0.72` | ✅ Production |
+| **Release Candidate** | `v2.0.73` | 🧪 Preparing for mobile release |
 
-📦 **See:** [Releases](../../releases) for changelog, builds, and APK/TestFlight access.  
-🧾 **Changelog:** [CHANGELOG.md](./CHANGELOG.md)
+📦 **Releases:** [View all builds](../../releases)  
+🧾 **Changelog:** [CHANGELOG.md](./CHANGELOG.md)  
 
+---
+
+## 🏗 Architecture  
+
+- **Frontend:** Next.js + React + TailwindCSS  
+- **Smart Contracts:** Integrated with [IOB Smart Contracts](https://github.com/iobeatss/IOB-Smart-contract)  
+- **API Layer:** Node.js / Express for blockchain and metadata sync  
+- **Storage:** IPFS + Pinata + Arweave for decentralized assets  
+- **Auth & Wallets:** WalletConnect, RainbowKit, Web3Modal  
+- **Security:** Cyberscope-audited contracts + CI/CD verifications  
+
+> 🔒 Verified and monitored by DAO multisigs for full transparency.
 
 ---
 
@@ -72,7 +91,7 @@ It connects streaming, NFTs, DeFi utilities, and wallet interactions — all wit
 All major updates are validated by the DAO through **Snapshot voting** and **GitHub discussions**.  
 
 🗳️ Participate → [Snapshot](https://snapshot.box/#/s:iobdao.eth)  
-📂 Governance discussions → [GitHub Governance](https://github.com/iobeatss/treasury/tree/main/docs/governance)
+📂 Governance discussions → [DAO Governance Docs](https://github.com/iobeatss/treasury/tree/main/docs/governance)
 
 ---
 
@@ -98,5 +117,3 @@ Special thanks to contributors, auditors, and partners from the **IO Beats commu
 ---
 
 © 2025 **IO Beats DAO** — *Music. DeFi. Community.*
- 
-
